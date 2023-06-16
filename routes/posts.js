@@ -44,6 +44,32 @@ router.get("/posts", async (req, res) => {
 });
 
 // 게시글 상세 조회
+router.get("/posts/:_postId", async (req, res) => {
+  // 언제 오류가 생기는지 알 수 없음
+  if (!req.body || !req.params) {
+    res
+      .status(400)
+      .json({ success: false, message: "데이터 형식이 올바르지 않습니다." });
+  }
+  try {
+    const { _postId } = req.params;
+    const posts = await Post.find();
+    const data = posts
+      .filter((post) => post._id.toString() === _postId)
+      .map((post) => {
+        return {
+          postId: post._id,
+          user: post.user,
+          title: post.title,
+          content: post.content,
+          createdAt: post.createdAt,
+        };
+      });
+    res.json({ data: data });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // 게시글 수정
 router.put("/posts/:postId", async (req, res) => {
