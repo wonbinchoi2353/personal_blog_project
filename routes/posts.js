@@ -50,8 +50,8 @@ router.get("/posts/:_postId", async (req, res) => {
       .status(400)
       .json({ success: false, message: "데이터 형식이 올바르지 않습니다." });
   }
+  const { _postId } = req.params;
   try {
-    const { _postId } = req.params;
     const posts = await Post.find();
     const data = posts
       .filter((post) => post._id.toString() === _postId)
@@ -78,8 +78,8 @@ router.put("/posts/:_postId", async (req, res) => {
       .json({ success: false, message: "데이터 형식이 올바르지 않습니다." });
   }
   const { password, title, content } = req.body;
+  const { _postId } = req.params;
   try {
-    const { _postId } = req.params;
     const existsPost = await Post.find({ _id: _postId });
     if (existsPost.length) {
       await Post.updateOne(
@@ -98,5 +98,27 @@ router.put("/posts/:_postId", async (req, res) => {
 });
 
 // 게시글 삭제
+router.delete("/posts/:_postId", async (req, res) => {
+  if (!req.body || !req.params) {
+    res
+      .status(400)
+      .json({ success: false, message: "데이터 형식이 올바르지 않습니다." });
+  }
+  const { password } = req.body;
+  const { _postId } = req.params;
+  try {
+    const existsPost = await Post.find({ _id: _postId });
+    if (existsPost.length && existsPost[0].password === password) {
+      await Post.deleteOne({ _id: _postId });
+      res.json({ message: "게시글을 삭제하였습니다." });
+    } else {
+      res
+        .status(404)
+        .json({ success: false, message: "게시글 조회에 실패하였습니다." });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 module.exports = router;
