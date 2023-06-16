@@ -20,7 +20,6 @@ router.post("/posts", async (req, res) => {
       content,
     });
     res.json({
-      success: true,
       message: "게시글을 생성하였습니다.",
       data: createdPosts,
     });
@@ -40,7 +39,7 @@ router.get("/posts", async (req, res) => {
       createdAt: post.createdAt,
     };
   });
-  res.json({ success: true, data: data });
+  res.json({ data: data });
 });
 
 // 게시글 상세 조회
@@ -65,7 +64,7 @@ router.get("/posts/:_postId", async (req, res) => {
           createdAt: post.createdAt,
         };
       });
-    res.json({ success: true, data: data });
+    res.json({ data: data });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -87,7 +86,7 @@ router.put("/posts/:_postId", async (req, res) => {
         { _id: _postId },
         { $set: { password: password, title: title, content: content } }
       );
-      res.json({ success: true, message: "게시글을 수정하였습니다." });
+      res.json({ message: "게시글을 수정하였습니다." });
     } else {
       res
         .status(404)
