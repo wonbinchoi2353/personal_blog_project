@@ -25,7 +25,7 @@ router.post("/posts", async (req, res) => {
       data: createdPosts,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
@@ -40,7 +40,7 @@ router.get("/posts", async (req, res) => {
       createdAt: post.createdAt,
     };
   });
-  res.json({ data: data });
+  res.json({ success: true, data: data });
 });
 
 // 게시글 상세 조회
@@ -65,29 +65,37 @@ router.get("/posts/:_postId", async (req, res) => {
           createdAt: post.createdAt,
         };
       });
-    res.json({ data: data });
+    res.json({ success: true, data: data });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
 // 게시글 수정
-router.put("/posts/:postId", async (req, res) => {
+router.put("/posts/:_postId", async (req, res) => {
+  if (!req.body || !req.params) {
+    res
+      .status(400)
+      .json({ success: false, message: "데이터 형식이 올바르지 않습니다." });
+  }
   const { password, title, content } = req.body;
-
-  const posts = await Post.find();
-  const data = posts.filter((post) => post._id === req.body._id);
-  if (data.length) {
+  try {
+    const { _postId } = req.params;
+    const existsPost = await Post.find({ _id: _postId });
+    if (existsPost.length) {
+      await Post.updateOne(
+        { _id: _postId },
+        { $set: { password: password, title: title, content: content } }
+      );
+      res.json({ success: true, message: "게시글을 수정하였습니다." });
+    } else {
+      res
+        .status(404)
+        .json({ success: false, message: "게시글 조회에 실패하였습니다." });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-
-  res.json({ data: data });
-
-  const existsCarts = await Cart.find({ goodsId: Number(goodsId) });
-  if (existsCarts.length) {
-    await Post.updateOne({ goodsId: Number(goodsId) }, { $set: { quantity } });
-  }
-
-  res.json({ success: true });
 });
 
 // 게시글 삭제
