@@ -1,22 +1,32 @@
 const express = require("express");
 const router = express.Router();
-// const { ObjectId } = require("mongodb");
 
 const data = [];
 
 // 게시글 작성
 const Post = require("../schemas/posts");
 router.post("/posts", async (req, res) => {
+  if (!req.body || !req.params) {
+    res
+      .status(400)
+      .json({ success: false, message: "데이터 형식이 올바르지 않습니다." });
+  }
   const { user, password, title, content } = req.body;
-
-  const createdPosts = await Post.create({
-    user,
-    password,
-    title,
-    content,
-  });
-
-  res.json({ message: "게시글을 생성하였습니다.", data: createdPosts });
+  try {
+    const createdPosts = await Post.create({
+      user,
+      password,
+      title,
+      content,
+    });
+    res.json({
+      success: true,
+      message: "게시글을 생성하였습니다.",
+      data: createdPosts,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // 게시글 목록 조회
