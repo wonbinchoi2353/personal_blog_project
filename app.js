@@ -3,12 +3,13 @@ const app = express();
 const port = 3000;
 
 const postsRouter = require("./routes/posts");
+const commentsRouter = require("./routes/comments");
 const connect = require("./schemas");
 connect();
 
 // post 사용하기 위한 문법, body parser
 app.use(express.json());
-app.use("/", [postsRouter]);
+app.use("/", [postsRouter, commentsRouter]);
 
 app.get("/", (req, res) => {
   res.send("블로그 페이지 입니다.");
