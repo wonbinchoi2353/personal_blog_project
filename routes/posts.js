@@ -80,7 +80,7 @@ router.put("/posts/:_postId", async (req, res) => {
   const { _postId } = req.params;
   try {
     const existsPost = await Post.find({ _id: _postId });
-    if (existsPost.length) {
+    if (existsPost.length && existsPost[0].password === password) {
       await Post.updateOne(
         { _id: _postId },
         { $set: { password: password, title: title, content: content } }
