@@ -11,12 +11,11 @@ const commentsSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    required: true,
   },
 });
 
 // 작성 시간, 수정 시간 설정
 commentsSchema.set("timestamps", true);
 
-// 콜렉션 이름 Posts
+// 콜렉션 이름 Comments
 module.exports = mongoose.model("Comments", commentsSchema);

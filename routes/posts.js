@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const Post = require("../schemas/posts");
 
 const data = [];
 
 // 게시글 작성
-const Post = require("../schemas/posts");
 router.post("/posts", async (req, res) => {
   if (!req.body || !req.params) {
     res
@@ -44,7 +44,6 @@ router.get("/posts", async (req, res) => {
 
 // 게시글 상세 조회
 router.get("/posts/:_postId", async (req, res) => {
-  // 언제 오류가 생기는지 알 수 없음
   if (!req.body || !req.params) {
     res
       .status(400)
